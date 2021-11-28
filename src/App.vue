@@ -28,4 +28,20 @@ body {
   height: 100%;
   background-color: #13233B;
 }
+
+#separatorLine {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+  #separatorLine span {
+    border: 1vw solid #272F75;
+    border-radius: 100vw;
+    display: block;
+    width: 85%;
+  }
+
+.purpleTxt {
+  color: #9381FF !important;
+}
 </style>
