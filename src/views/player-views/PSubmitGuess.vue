@@ -14,9 +14,36 @@
     <div class="playerAnswer">
       <div class="txtAnswer">
         <span>Your answer:</span>
-        <input v-model="txtPlayerAnswer" type="text" placeholder="">
+        <textarea v-model="txtPlayerAnswer" type="text" placeholder="" />
       </div>
       <div class="emojisAnswer">
+        <span>Your emoji recreation:</span>
+        <div class="emojiAnswersWraper">
+          <div>
+            <span class="cameraWrapper">
+              <video v-show="!isPhotoTaken1" ref="camera1" autoplay @click="takePhoto1"></video>
+              <canvas v-show="isPhotoTaken1" id="photoTaken1" ref="canvas1"></canvas>
+            </span>
+            <span class="cameraWrapper">
+              <video v-show="isPhotoTaken1 && !isPhotoTaken2" ref="camera2" autoplay @click="takePhoto2"></video>
+              <canvas v-show="isPhotoTaken2" id="photoTaken2" ref="canvas2"></canvas>
+            </span>
+          </div>
+          <div>
+            <span class="cameraWrapper">
+              <video v-show="isPhotoTaken2 && !isPhotoTaken3" ref="camera3" autoplay @click="takePhoto3"></video>
+              <canvas v-show="isPhotoTaken3" id="photoTaken3" ref="canvas3"></canvas>
+            </span>
+            <span class="cameraWrapper">
+              <video v-show="isPhotoTaken3 && !isPhotoTaken4" ref="camera4" autoplay @click="takePhoto4"></video>
+              <canvas v-show="isPhotoTaken4" id="photoTaken4" ref="canvas4"></canvas>
+            </span>
+          </div>
+        </div>
+
+        <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box" :class="{ 'flash' : isShotPhoto }">
+          <div class="camera-shutter" :class="{'flash' : isShotPhoto}"></div>
+        </div>
       </div>
     </div>
     <!-- <div class="loginInputs">
@@ -38,14 +65,112 @@ export default {
   data() {
     return {
       txtPlayerAnswer: null,
-      pin: null
+      pin: null,
+      isCameraOpen: true,
+      isPhotoTaken1: false,
+      isPhotoTaken2: false,
+      isPhotoTaken3: false,
+      isPhotoTaken4: false,
+      isShotPhoto: false,
+      isLoading: false,
+      link: '#',
+
+      emojiAnswer1: ''
     }
   },
   components: {
-    // HelloWorld
+  },
+  mounted: function() {
+    this.createCameraElement();
   },
   methods: {
+    createCameraElement() {
+      this.isLoading = true;
+      
+      const constraints = (window.constraints = {
+				audio: false,
+				video: true
+			});
+
+			navigator.mediaDevices
+				.getUserMedia(constraints)
+				.then(stream => {
+          this.isLoading = false;
+					this.$refs.camera1.srcObject = stream;
+          this.$refs.camera2.srcObject = stream;
+          this.$refs.camera3.srcObject = stream;
+          this.$refs.camera4.srcObject = stream;
+				})
+				.catch(e => {
+          this.isLoading = false;
+					alert("May the browser didn't support or there is some errors." + e);
+				});
+    },
     
+    takePhoto1() {
+      if(!this.isPhotoTaken1) {
+        this.isShotPhoto1 = true;
+
+        const FLASH_TIMEOUT = 50;
+
+        setTimeout(() => {
+          this.isShotPhoto1 = false;
+        }, FLASH_TIMEOUT);
+      }
+      
+      this.isPhotoTaken1 = !this.isPhotoTaken1;
+      
+      const context1 = this.$refs.canvas1.getContext('2d');
+      context1.drawImage(this.$refs.camera1, 0, 0, this.$refs.canvas1.width, this.$refs.canvas1.height);
+    },
+    takePhoto2() {
+      if(!this.isPhotoTaken2) {
+        this.isShotPhoto2 = true;
+
+        const FLASH_TIMEOUT = 50;
+
+        setTimeout(() => {
+          this.isShotPhoto2 = false;
+        }, FLASH_TIMEOUT);
+      }
+      
+      this.isPhotoTaken2 = !this.isPhotoTaken2;
+      
+      const context2 = this.$refs.canvas2.getContext('2d');
+      context2.drawImage(this.$refs.camera2, 0, 0, this.$refs.canvas2.width, this.$refs.canvas2.height);
+    },
+    takePhoto3() {
+      if(!this.isPhotoTaken3) {
+        this.isShotPhoto3 = true;
+
+        const FLASH_TIMEOUT = 50;
+
+        setTimeout(() => {
+          this.isShotPhoto3 = false;
+        }, FLASH_TIMEOUT);
+      }
+      
+      this.isPhotoTaken3 = !this.isPhotoTaken3;
+      
+      const context3 = this.$refs.canvas3.getContext('2d');
+      context3.drawImage(this.$refs.camera3, 0, 0, this.$refs.canvas3.width, this.$refs.canvas3.height);
+    },
+    takePhoto4() {
+      if(!this.isPhotoTaken4) {
+        this.isShotPhoto4 = true;
+
+        const FLASH_TIMEOUT = 50;
+
+        setTimeout(() => {
+          this.isShotPhoto4 = false;
+        }, FLASH_TIMEOUT);
+      }
+      
+      this.isPhotoTaken4 = !this.isPhotoTaken4;
+      
+      const context4 = this.$refs.canvas4.getContext('2d');
+      context4.drawImage(this.$refs.camera4, 0, 0, this.$refs.canvas4.width, this.$refs.canvas4.height);
+    }
   }
 }
 </script>
@@ -62,7 +187,6 @@ export default {
   flex-flow: column;
   /* justify-content: center; */
   align-items: start;
-  height: 100%;
 }
   .titleQuestion {
     font-size: 10vw;
@@ -116,7 +240,53 @@ export default {
         color: #D1D1D1;
         margin: 0 .3vw 0 2vw;
       }
-      .playerAnswer .txtAnswer input {
+      .playerAnswer .txtAnswer textarea {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 900;
+        font-size: 7vw;
+        background-color: #1E2139;
+        border: 2px solid #001AFF;
+        color: #9381FF;
+        text-align: start;
+        padding: 3vw 3vw;
+        border-radius: 8vw;
+        height: 22vw;
+        width: 91%;
+      }
+
+    .playerAnswer .emojisAnswer {
+      display: flex;
+      flex-flow: column;
+      align-items: start;
+      margin: 0 5vw;
+      height: 50vh;
+    }
+      .playerAnswer .emojisAnswer span {
+        font-size: 8vw;
+        font-weight: 900;
+        color: #D1D1D1;
+        margin: 0 .3vw 0 2vw;
+      }
+      .playerAnswer .emojisAnswer .emojiAnswersWraper {
+        display: flex;
+        flex-flow: column;
+      }
+        .playerAnswer .emojisAnswer .emojiAnswersWraper div {
+          display: flex;
+          flex-flow: row;
+        }
+          .playerAnswer .emojisAnswer .emojiAnswersWraper div .cameraWrapper {
+            border: 2px solid #001AFF;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 8vw;
+          }
+          .playerAnswer .emojisAnswer .emojiAnswersWraper div .cameraWrapper video, .playerAnswer .emojisAnswer .emojiAnswersWraper div .cameraWrapper canvas {
+            width: 40vw;
+            height: 40vw;
+            border-radius: 8vw;
+          }
+        /* .playerAnswer .emojisAnswer .emojiAnswersWraper input {
         font-family: 'Montserrat', sans-serif;
         font-weight: 900;
         font-size: 7vw;
@@ -124,10 +294,11 @@ export default {
         border: 2px solid #001AFF;
         color: #9381FF;
         text-align: center;
+        padding: 3vw 3vw;
         border-radius: 8vw;
         height: 22vw;
-        width: 97%;
-      }
+        width: 91%;
+      } */
 
   /* .loginInputs {
     display: flex;

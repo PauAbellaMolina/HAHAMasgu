@@ -49,7 +49,7 @@ export default {
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
 }
   .title {
     display: flex;
