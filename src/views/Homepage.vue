@@ -10,7 +10,7 @@
       <input v-model="gameCodeRequestJoin" type="number" placeholder="CODE">
       <button class="joinBtn" @click="test()">JOIN</button>
       <span class="separator" />
-      <button class="createBtn">CREATE</button>
+      <button class="createBtn" @click="$router.push('/player-submit-guess')">CREATE</button>
     </div>
   </div>
 </template>

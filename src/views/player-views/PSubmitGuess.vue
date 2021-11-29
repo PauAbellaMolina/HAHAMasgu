@@ -21,21 +21,21 @@
         <div class="emojiAnswersWraper">
           <div>
             <span class="cameraWrapper">
-              <video v-show="!isPhotoTaken1" ref="camera1" autoplay @click="takePhoto1"></video>
+              <video v-show="!isPhotoTaken1" ref="camera1" autoplay playsinline @click="takePhoto1"></video>
               <canvas v-show="isPhotoTaken1" id="photoTaken1" ref="canvas1"></canvas>
             </span>
             <span class="cameraWrapper">
-              <video v-show="isPhotoTaken1 && !isPhotoTaken2" ref="camera2" autoplay @click="takePhoto2"></video>
+              <video v-show="isPhotoTaken1 && !isPhotoTaken2" ref="camera2" autoplay playsinline @click="takePhoto2"></video>
               <canvas v-show="isPhotoTaken2" id="photoTaken2" ref="canvas2"></canvas>
             </span>
           </div>
           <div>
             <span class="cameraWrapper">
-              <video v-show="isPhotoTaken2 && !isPhotoTaken3" ref="camera3" autoplay @click="takePhoto3"></video>
+              <video v-show="isPhotoTaken2 && !isPhotoTaken3" ref="camera3" autoplay playsinline @click="takePhoto3"></video>
               <canvas v-show="isPhotoTaken3" id="photoTaken3" ref="canvas3"></canvas>
             </span>
             <span class="cameraWrapper">
-              <video v-show="isPhotoTaken3 && !isPhotoTaken4" ref="camera4" autoplay @click="takePhoto4"></video>
+              <video v-show="isPhotoTaken3 && !isPhotoTaken4" ref="camera4" autoplay playsinline @click="takePhoto4"></video>
               <canvas v-show="isPhotoTaken4" id="photoTaken4" ref="canvas4"></canvas>
             </span>
           </div>
@@ -75,38 +75,46 @@ export default {
       isLoading: false,
       link: '#',
 
-      emojiAnswer1: ''
+      emojiAnswer1: '',
+      stream: null,
+      ready: false,
+      photo: null
     }
   },
   components: {
   },
   mounted: function() {
-    this.createCameraElement();
+    this.createCameraElement(this.$refs.camera1);
   },
   methods: {
-    createCameraElement() {
+    async createCameraElement(refRecieved) {
       this.isLoading = true;
       
       const constraints = (window.constraints = {
 				audio: false,
-				video: true
+				video: {
+          facingMode: 'user'
+        }
 			});
 
-			navigator.mediaDevices
+			await navigator.mediaDevices
 				.getUserMedia(constraints)
 				.then(stream => {
           this.isLoading = false;
-					this.$refs.camera1.srcObject = stream;
-          this.$refs.camera2.srcObject = stream;
-          this.$refs.camera3.srcObject = stream;
-          this.$refs.camera4.srcObject = stream;
+					refRecieved.srcObject = stream;
 				})
 				.catch(e => {
           this.isLoading = false;
 					alert("May the browser didn't support or there is some errors." + e);
 				});
     },
-    
+    stopCameraStream(refRecieved) {
+      let tracks = refRecieved.srcObject.getTracks();
+
+			tracks.forEach(track => {
+				track.stop();
+			});
+    },
     takePhoto1() {
       if(!this.isPhotoTaken1) {
         this.isShotPhoto1 = true;
@@ -122,6 +130,9 @@ export default {
       
       const context1 = this.$refs.canvas1.getContext('2d');
       context1.drawImage(this.$refs.camera1, 0, 0, this.$refs.canvas1.width, this.$refs.canvas1.height);
+      
+      this.createCameraElement(this.$refs.camera2);
+      this.stopCameraStream(this.$refs.camera1);
     },
     takePhoto2() {
       if(!this.isPhotoTaken2) {
@@ -138,6 +149,9 @@ export default {
       
       const context2 = this.$refs.canvas2.getContext('2d');
       context2.drawImage(this.$refs.camera2, 0, 0, this.$refs.canvas2.width, this.$refs.canvas2.height);
+      
+      this.createCameraElement(this.$refs.camera3);
+      this.stopCameraStream(this.$refs.camera2);
     },
     takePhoto3() {
       if(!this.isPhotoTaken3) {
@@ -154,6 +168,9 @@ export default {
       
       const context3 = this.$refs.canvas3.getContext('2d');
       context3.drawImage(this.$refs.camera3, 0, 0, this.$refs.canvas3.width, this.$refs.canvas3.height);
+
+      this.createCameraElement(this.$refs.camera4);
+      this.stopCameraStream(this.$refs.camera3);
     },
     takePhoto4() {
       if(!this.isPhotoTaken4) {
@@ -170,6 +187,8 @@ export default {
       
       const context4 = this.$refs.canvas4.getContext('2d');
       context4.drawImage(this.$refs.camera4, 0, 0, this.$refs.canvas4.width, this.$refs.canvas4.height);
+
+      this.stopCameraStream(this.$refs.camera4);
     }
   }
 }
