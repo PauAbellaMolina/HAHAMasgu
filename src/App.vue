@@ -16,7 +16,7 @@
 
 body {
   margin: 0;
-  /* height: 100vh; */
+  background-color: #13233B;
 }
 
 #app {

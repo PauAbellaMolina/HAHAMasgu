@@ -20,46 +20,37 @@
         <span>Your emoji recreation:</span>
         <div class="emojiAnswersWraper">
           <div>
-            <span class="cameraWrapper">
+            <span class="cameraWrapper" ref="test">
+              <span class="emojiInsideCamera">👺</span>
               <video v-show="!isPhotoTaken1" ref="camera1" autoplay playsinline @click="takePhoto1"></video>
               <canvas v-show="isPhotoTaken1" id="photoTaken1" ref="canvas1"></canvas>
             </span>
             <span class="cameraWrapper">
+              <span class="emojiInsideCamera">😹</span>
               <video v-show="isPhotoTaken1 && !isPhotoTaken2" ref="camera2" autoplay playsinline @click="takePhoto2"></video>
               <canvas v-show="isPhotoTaken2" id="photoTaken2" ref="canvas2"></canvas>
             </span>
           </div>
           <div>
             <span class="cameraWrapper">
+              <span class="emojiInsideCamera">🙏</span>
               <video v-show="isPhotoTaken2 && !isPhotoTaken3" ref="camera3" autoplay playsinline @click="takePhoto3"></video>
               <canvas v-show="isPhotoTaken3" id="photoTaken3" ref="canvas3"></canvas>
             </span>
             <span class="cameraWrapper">
+              <span class="emojiInsideCamera">🗿</span>
               <video v-show="isPhotoTaken3 && !isPhotoTaken4" ref="camera4" autoplay playsinline @click="takePhoto4"></video>
               <canvas v-show="isPhotoTaken4" id="photoTaken4" ref="canvas4"></canvas>
             </span>
           </div>
         </div>
-
-        <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box" :class="{ 'flash' : isShotPhoto }">
-          <div class="camera-shutter" :class="{'flash' : isShotPhoto}"></div>
-        </div>
       </div>
+      <button class="submitBtn" @click="test()" :disabled="txtPlayerAnswer===null || txtPlayerAnswer==='' || !isPhotoTaken1 || !isPhotoTaken2 || !isPhotoTaken3 || !isPhotoTaken4">SUBMIT</button>
     </div>
-    <!-- <div class="loginInputs">
-      <input v-model="name" type="text" placeholder="@name">
-      <span class="separator" />
-      <input v-model="pin" type="number" placeholder="pin">
-      <span class="separator" />
-      <button class="goinBtn" @click="test()">GO IN</button>
-    </div> -->
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
   name: 'Login',
   data() {
@@ -93,7 +84,7 @@ export default {
       const constraints = (window.constraints = {
 				audio: false,
 				video: {
-          facingMode: 'user'
+          facingMode: 'user',
         }
 			});
 
@@ -128,11 +119,20 @@ export default {
       
       this.isPhotoTaken1 = !this.isPhotoTaken1;
       
-      const context1 = this.$refs.canvas1.getContext('2d');
-      context1.drawImage(this.$refs.camera1, 0, 0, this.$refs.canvas1.width, this.$refs.canvas1.height);
+      const camera = this.$refs.camera1;
+      const canvas = this.$refs.canvas1;
+      const context = canvas.getContext('2d');
+      let scale = 300 / camera.videoWidth;
+      let w = camera.videoWidth * scale;
+      let h = camera.videoHeight * scale;
+
+      canvas.width = w;
+      canvas.height = h;
+
+      context.drawImage(camera, 0, 0, w, h);
       
       this.createCameraElement(this.$refs.camera2);
-      this.stopCameraStream(this.$refs.camera1);
+      this.stopCameraStream(camera);
     },
     takePhoto2() {
       if(!this.isPhotoTaken2) {
@@ -147,11 +147,20 @@ export default {
       
       this.isPhotoTaken2 = !this.isPhotoTaken2;
       
-      const context2 = this.$refs.canvas2.getContext('2d');
-      context2.drawImage(this.$refs.camera2, 0, 0, this.$refs.canvas2.width, this.$refs.canvas2.height);
+      const camera = this.$refs.camera2;
+      const canvas = this.$refs.canvas2;
+      const context = canvas.getContext('2d');
+      let scale = 300 / camera.videoWidth;
+      let w = camera.videoWidth * scale;
+      let h = camera.videoHeight * scale;
+
+      canvas.width = w;
+      canvas.height = h;
+
+      context.drawImage(camera, 0, 0, w, h);
       
       this.createCameraElement(this.$refs.camera3);
-      this.stopCameraStream(this.$refs.camera2);
+      this.stopCameraStream(camera);
     },
     takePhoto3() {
       if(!this.isPhotoTaken3) {
@@ -166,11 +175,20 @@ export default {
       
       this.isPhotoTaken3 = !this.isPhotoTaken3;
       
-      const context3 = this.$refs.canvas3.getContext('2d');
-      context3.drawImage(this.$refs.camera3, 0, 0, this.$refs.canvas3.width, this.$refs.canvas3.height);
+      const camera = this.$refs.camera3;
+      const canvas = this.$refs.canvas3;
+      const context = canvas.getContext('2d');
+      let scale = 300 / camera.videoWidth;
+      let w = camera.videoWidth * scale;
+      let h = camera.videoHeight * scale;
+
+      canvas.width = w;
+      canvas.height = h;
+
+      context.drawImage(camera, 0, 0, w, h);
 
       this.createCameraElement(this.$refs.camera4);
-      this.stopCameraStream(this.$refs.camera3);
+      this.stopCameraStream(camera);
     },
     takePhoto4() {
       if(!this.isPhotoTaken4) {
@@ -185,10 +203,19 @@ export default {
       
       this.isPhotoTaken4 = !this.isPhotoTaken4;
       
-      const context4 = this.$refs.canvas4.getContext('2d');
-      context4.drawImage(this.$refs.camera4, 0, 0, this.$refs.canvas4.width, this.$refs.canvas4.height);
+      const camera = this.$refs.camera4;
+      const canvas = this.$refs.canvas4;
+      const context = canvas.getContext('2d');
+      let scale = 300 / camera.videoWidth;
+      let w = camera.videoWidth * scale;
+      let h = camera.videoHeight * scale;
 
-      this.stopCameraStream(this.$refs.camera4);
+      canvas.width = w;
+      canvas.height = h;
+
+      context.drawImage(camera, 0, 0, w, h);
+
+      this.stopCameraStream(camera);
     }
   }
 }
@@ -277,14 +304,14 @@ export default {
       display: flex;
       flex-flow: column;
       align-items: start;
-      margin: 0 5vw;
-      height: 50vh;
+      margin: 0 5vw 6vw 5vw;
+      /* height: 50vh; */
     }
       .playerAnswer .emojisAnswer span {
         font-size: 8vw;
         font-weight: 900;
         color: #D1D1D1;
-        margin: 0 .3vw 0 2vw;
+        margin: 0 .3vw .7vw 2vw;
       }
       .playerAnswer .emojisAnswer .emojiAnswersWraper {
         display: flex;
@@ -293,61 +320,48 @@ export default {
         .playerAnswer .emojisAnswer .emojiAnswersWraper div {
           display: flex;
           flex-flow: row;
+          margin-bottom: 3vw;
         }
           .playerAnswer .emojisAnswer .emojiAnswersWraper div .cameraWrapper {
             border: 2px solid #001AFF;
             width: 40vw;
             height: 40vw;
             border-radius: 8vw;
+            position: relative;
           }
+            .playerAnswer .emojisAnswer .emojiAnswersWraper div .cameraWrapper .emojiInsideCamera {
+              position: absolute;
+              font-size: 10vw;
+              /* margin: 1.5vw 0 0 1.5vw; */
+              top: .5vw;
+              left: .3vw;
+              z-index: 1;
+            }
           .playerAnswer .emojisAnswer .emojiAnswersWraper div .cameraWrapper video, .playerAnswer .emojisAnswer .emojiAnswersWraper div .cameraWrapper canvas {
-            width: 40vw;
-            height: 40vw;
             border-radius: 8vw;
+            object-fit: cover;
+            height: 100% !important;
+            width: 100% !important;
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
           }
-        /* .playerAnswer .emojisAnswer .emojiAnswersWraper input {
+
+      .playerAnswer button {
         font-family: 'Montserrat', sans-serif;
         font-weight: 900;
-        font-size: 7vw;
-        background-color: #1E2139;
-        border: 2px solid #001AFF;
-        color: #9381FF;
+        border: none;
         text-align: center;
-        padding: 3vw 3vw;
-        border-radius: 8vw;
-        height: 22vw;
-        width: 91%;
-      } */
-
-  /* .loginInputs {
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    width: 80vw;
-  }
-    .loginInputs input {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 15vw;
-      background-color: #1E2139;
-      border: 2px solid #001AFF;
-      color: #3C3D4C;
-      text-align: center;
-      border-radius: 8vw;
-      height: 22vw;
-    }
-    .loginInputs button {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      border: none;
-      text-align: center;
-    }
-      .loginInputs .goinBtn {
-        font-size: 11vw;
-        background-color: #1328E9;
-        color: #DBDBDB;
-        border-radius: 9vw;
-        height: 35vw;
-        margin: 2.5vw 0 0 0;
-      } */
+      }
+        .playerAnswer .submitBtn {
+          font-size: 9vw;
+          background-color: #1328E9;
+          color: #DBDBDB;
+          border-radius: 7vw;
+          height: 19vw;
+          margin: 0 14vw 5vw 15vw;
+        }
+        .playerAnswer .submitBtn:disabled {
+          background-color: #19269b;
+          color: #a8a8a8;
+        }
 </style>
