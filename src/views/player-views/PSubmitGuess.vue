@@ -14,7 +14,7 @@
     <div class="playerAnswer">
       <div class="txtAnswer">
         <span>Your answer:</span>
-        <textarea v-model="txtPlayerAnswer" type="text" placeholder="" />
+        <textarea v-model="guessing.txtPlayerAnswer" type="text" placeholder="" />
       </div>
       <div class="emojisAnswer">
         <span>Your emoji recreation:</span>
@@ -45,31 +45,34 @@
           </div>
         </div>
       </div>
-      <button class="submitBtn" @click="test()" :disabled="txtPlayerAnswer===null || txtPlayerAnswer==='' || !isPhotoTaken1 || !isPhotoTaken2 || !isPhotoTaken3 || !isPhotoTaken4">SUBMIT</button>
+      <button class="submitBtn" @click="submitGuessing()" :disabled="guessing.txtPlayerAnswer===null || guessing.txtPlayerAnswer==='' || !isPhotoTaken1 || !isPhotoTaken2 || !isPhotoTaken3 || !isPhotoTaken4">SUBMIT</button>
     </div>
   </div>
 </template>
 
 <script>
+import store from "../../store/index.js"
+
 export default {
   name: 'Login',
   data() {
     return {
-      txtPlayerAnswer: null,
-      pin: null,
-      isCameraOpen: true,
       isPhotoTaken1: false,
       isPhotoTaken2: false,
       isPhotoTaken3: false,
       isPhotoTaken4: false,
       isShotPhoto: false,
       isLoading: false,
-      link: '#',
 
-      emojiAnswer1: '',
-      stream: null,
-      ready: false,
-      photo: null
+      guessing: {
+        txtPlayerAnswer: '',
+        photos: {
+          photo1: '',
+          photo2: '',
+          photo3: '',
+          photo4: '',
+        }
+      }
     }
   },
   components: {
@@ -78,6 +81,9 @@ export default {
     this.createCameraElement(this.$refs.camera1);
   },
   methods: {
+    submitGuessing() {
+      store.commit('submitGuessing', this.guessing);
+    },
     async createCameraElement(refRecieved) {
       this.isLoading = true;
       
@@ -107,16 +113,6 @@ export default {
 			});
     },
     takePhoto1() {
-      if(!this.isPhotoTaken1) {
-        this.isShotPhoto1 = true;
-
-        const FLASH_TIMEOUT = 50;
-
-        setTimeout(() => {
-          this.isShotPhoto1 = false;
-        }, FLASH_TIMEOUT);
-      }
-      
       this.isPhotoTaken1 = !this.isPhotoTaken1;
       
       const camera = this.$refs.camera1;
@@ -130,6 +126,7 @@ export default {
       canvas.height = h;
 
       context.drawImage(camera, 0, 0, w, h);
+      this.guessing.photos.photo1 = canvas.toDataURL();
       
       this.createCameraElement(this.$refs.camera2);
       this.stopCameraStream(camera);
@@ -158,6 +155,7 @@ export default {
       canvas.height = h;
 
       context.drawImage(camera, 0, 0, w, h);
+      this.guessing.photos.photo2 = canvas.toDataURL();
       
       this.createCameraElement(this.$refs.camera3);
       this.stopCameraStream(camera);
@@ -186,6 +184,7 @@ export default {
       canvas.height = h;
 
       context.drawImage(camera, 0, 0, w, h);
+      this.guessing.photos.photo3 = canvas.toDataURL();
 
       this.createCameraElement(this.$refs.camera4);
       this.stopCameraStream(camera);
@@ -214,6 +213,7 @@ export default {
       canvas.height = h;
 
       context.drawImage(camera, 0, 0, w, h);
+      this.guessing.photos.photo4 = canvas.toDataURL();
 
       this.stopCameraStream(camera);
     }
