@@ -8,7 +8,7 @@
     </div>
     <div class="joinInputs">
       <input v-model="gameCodeRequestJoin" type="number" placeholder="CODE">
-      <button class="joinBtn" @click="test()">JOIN</button>
+      <button class="joinBtn" @click="join()">JOIN</button>
       <span class="separator" />
       <button class="createBtn" @click="$router.push('/player-submit-guess')">CREATE</button>
     </div>
@@ -18,6 +18,13 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+
+// import { io } from 'socket.io-client';
+// const socket = io('http://localhost:3000');
+
+// this.$socket.on('test', () => {
+//   console.log("test");
+// });
 
 export default {
   name: 'Homepage',
@@ -29,11 +36,22 @@ export default {
   components: {
     // HelloWorld
   },
-  methods: {
+  sockets: {
+    connect() {
+      console.log('socket connected')
+    },
+    customEmit() {
+      console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+    },
     test() {
-      console.log(this.gameCodeRequestJoin);
+      console.log('test')
     }
-  }
+  },
+  methods: {
+    join() {
+      this.$socket.client.emit('test');
+    }
+  },
 }
 </script>
 

@@ -2,13 +2,28 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Homepage from '../views/Homepage.vue'
 
+import VueSocketIOExt from 'vue-socket.io-extended'
+import { io } from 'socket.io-client'
+import store from '../store'
+
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
     name: 'Homepage',
-    component: Homepage
+    component: Homepage,
+    beforeEnter (to, from, next) {
+      if(store.state.logged) {
+        if (!Vue.prototype.$socket) { 
+          const socket = io('http://localhost:3000')
+          Vue.use(VueSocketIOExt, socket)
+        }
+        next()
+      } else {
+        router.push("/login")
+      }
+   }
   },
   {
     path: '/login',
