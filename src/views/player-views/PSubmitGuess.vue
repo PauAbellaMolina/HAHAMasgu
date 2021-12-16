@@ -1,14 +1,15 @@
 <template>
   <div class="pageWrapper">
     <div class="titleQuestion">
-      <span>What is <span class="purpleTxt">@pau</span> trying to say?</span>
+      <span>What is <span class="purpleTxt">@{{this.gameCreator}}</span> trying to say?</span>
     </div>
     <div class="emojisToGuess">
-      <span>👺😹🙏🗿</span>
+      <!-- <span>👺😹🙏🗿</span> -->
+      <span>{{state.gameData.emoji1}}{{state.gameData.emoji2}}{{state.gameData.emoji3}}{{state.gameData.emoji4}}</span>
     </div>
     <div class="hintGuess">
       <span class="hintTitle">Hint:</span>
-      <span class="hint purpleTxt">"Lorem ipsum lorem ipsum"</span>
+      <span class="hint purpleTxt">"{{state.gameData.guess}}"</span>
     </div>
     <span id="separatorLine"><span></span></span>
     <div class="playerAnswer">
@@ -52,6 +53,7 @@
 
 <script>
 import store from "../../store/index.js"
+import axios from 'axios'
 
 export default {
   name: 'Login',
@@ -72,15 +74,36 @@ export default {
           photo3: '',
           photo4: '',
         }
-      }
+      },
+
+      state: store.state,
+
+      gameCreator: ''
     }
   },
   components: {
   },
   mounted: function() {
     this.createCameraElement(this.$refs.camera1);
+    this.getGameCreatorName(this.state.gameData.idCreator);
   },
   methods: {
+    getGameCreatorName(idCreator) {
+      axios.get("http://127.0.0.1:8081/api/users/"+idCreator, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        if(response.status == 200) {
+          this.gameCreator = response.data.username
+        }
+      })
+        .catch((error) => {
+        console.log(error)
+      });
+    },
     submitGuessing() {
       store.commit('submitGuessing', this.guessing);
     },

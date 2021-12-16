@@ -18,6 +18,8 @@ const routes = [
         if (!Vue.prototype.$socket) { 
           const socket = io('http://localhost:3000')
           Vue.use(VueSocketIOExt, socket)
+
+          console.log("user connected to socket")
         }
         next()
       } else {
@@ -36,7 +38,14 @@ const routes = [
   {
     path: '/player-submit-guess',
     name: 'PlayerSubmitGuess',
-    component: () => import('../views/player-views/PSubmitGuess.vue')
+    component: () => import('../views/player-views/PSubmitGuess.vue'),
+    beforeEnter (to, from, next) {
+      if(store.state.logged) {
+        next()
+      } else {
+        router.push("/login")
+      }
+   }
   }
 ]
 

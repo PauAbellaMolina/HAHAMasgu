@@ -101,7 +101,7 @@ export default {
         margin: 2.5vw 0 0 0;
       }
       .loginInputs .goinBtn:disabled {
-          background-color: #19269b;
-          color: #a8a8a8;
-        }
+        background-color: #19269b;
+        color: #a8a8a8;
+      }
 </style>
