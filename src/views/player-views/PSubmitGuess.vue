@@ -9,7 +9,7 @@
     </div>
     <div class="hintGuess">
       <span class="hintTitle">Hint:</span>
-      <span class="hint purpleTxt">"{{state.gameData.guess}}"</span>
+      <span class="hint purpleTxt">"{{state.gameData.hint}}"</span>
     </div>
     <span id="separatorLine"><span></span></span>
     <div class="playerAnswer">
@@ -56,7 +56,7 @@ import store from "../../store/index.js"
 import axios from 'axios'
 
 export default {
-  name: 'Login',
+  name: 'PSubmitGuess',
   data() {
     return {
       isPhotoTaken1: false,
@@ -255,7 +255,7 @@ export default {
   display: flex;
   flex-flow: column;
   /* justify-content: center; */
-  align-items: start;
+  align-items: center;
 }
   .titleQuestion {
     font-size: 10vw;
@@ -272,7 +272,7 @@ export default {
     margin: 0 4vw;
   }
     .emojisToGuess span {
-      font-size: 17vw;
+      font-size: 15vw;
     }
 
   .hintGuess {

@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Homepage from '../views/Homepage.vue'
-
-import VueSocketIOExt from 'vue-socket.io-extended'
-import { io } from 'socket.io-client'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -16,10 +13,8 @@ const routes = [
     beforeEnter (to, from, next) {
       if(store.state.logged) {
         if (!Vue.prototype.$socket) { 
-          const socket = io('http://localhost:3000')
-          Vue.use(VueSocketIOExt, socket)
-
-          console.log("user connected to socket")
+          //Call createSocketConnection in store to create socket instance
+          store.commit('createSocketConnection');
         }
         next()
       } else {
@@ -39,6 +34,18 @@ const routes = [
     path: '/player-submit-guess',
     name: 'PlayerSubmitGuess',
     component: () => import('../views/player-views/PSubmitGuess.vue'),
+    beforeEnter (to, from, next) {
+      if(store.state.logged) {
+        next()
+      } else {
+        router.push("/login")
+      }
+   }
+  },
+  {
+    path: '/player-submited-guess',
+    name: 'PlayerSubmitedGuess',
+    component: () => import('../views/player-views/PSubmitedGuess.vue'),
     beforeEnter (to, from, next) {
       if(store.state.logged) {
         next()

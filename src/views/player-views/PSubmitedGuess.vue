@@ -54,7 +54,7 @@
 import store from "../../store/index.js"
 
 export default {
-  name: 'Login',
+  name: 'PSubmitedGuess',
   data() {
     return {
       isPhotoTaken1: false,

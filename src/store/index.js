@@ -3,6 +3,9 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
+import VueSocketIOExt from 'vue-socket.io-extended'
+import { io } from 'socket.io-client'
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -12,8 +15,17 @@ const store = new Vuex.Store({
     userName: '',
     gameData: null,
     guessing: null,
+    socket: null
   },
   mutations: {
+    //Create a socket instance and save it in state. Called from router (Homepage (/))
+    createSocketConnection(state) {
+      const socket = io('http://localhost:3000');
+      Vue.use(VueSocketIOExt, socket)
+      state.socket = socket;
+      console.log("user connected to socket")
+    },
+
     //Called from Login.vue (/login)
     tryLoging(state, data) {
       const body = JSON.stringify({ data });
@@ -25,7 +37,7 @@ const store = new Vuex.Store({
         }
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
 
         //RESPOSE.DATA.LENGTH > 1 IF LOGGED SUCCESFULLY
         if(response.data.length > 0) {
@@ -52,15 +64,52 @@ const store = new Vuex.Store({
         }
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
 
         //RESPOSE.DATA.LENGTH > 1 IF GAME FOUND
         if(response.data.length > 0) {
           state.gameData = response.data[0];
-          console.log(state);
+          // console.log(state);
           
+          //CONNECT USER TO ROOM ON SOCKET SERVER
+          const room = state.gameData.id;
+          state.socket.emit('room', room);
+          //If joined correctly, show it
+          state.socket.on('roomJoined', () => {
+            console.log("room joined correctly");
+          });
+
           //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
-          router.push("/player-submit-guess"); //Redirect to player submit guess
+          axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id+"/"+state.idUser, 
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((response) => {
+            // console.log(response);
+
+            //RESPOSE.DATA.LENGTH > 1 IF USER ALREADY SUMBITED A GUESS TO THAT ROOM
+            if(response.data.length > 0) {
+              state.guessing = {
+                                  txtPlayerAnswer: response.data[0].guessing,
+                                  photos: {
+                                    photo1: response.data[0].photo1,
+                                    photo2: response.data[0].photo2,
+                                    photo3: response.data[0].photo3,
+                                    photo4: response.data[0].photo4,
+                                  }
+                                }
+              
+              router.push("/player-submited-guess"); //Redirect to submited screen
+            } else {
+              router.push("/player-submit-guess"); //Redirect to player submit guess
+            }
+
+          })
+            .catch((error) => {
+            console.log(error)
+          });
         }
       })
         .catch((error) => {
@@ -72,7 +121,15 @@ const store = new Vuex.Store({
     submitGuessing(state, guessing) {
       state.guessing = guessing
 
-      const body = JSON.stringify({ state });
+      const stateAux = {
+        logged: state.logged,
+        idUser: state.isUser,
+        userName: state.userName,
+        gameData: state.gameData,
+        guessing: state.guessing,
+      }
+
+      const body = JSON.stringify({ stateAux });
 
       axios.post("http://127.0.0.1:8081/api/guesses", body, 
       {
@@ -82,6 +139,7 @@ const store = new Vuex.Store({
       })
       .then((response) => {
         console.log(response);
+        // if(response.)
         // router.push("/player-submited-guess");
       })
         .catch((error) => {
