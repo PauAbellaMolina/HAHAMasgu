@@ -1,221 +1,60 @@
 <template>
   <div class="pageWrapper">
-    <div class="titleQuestion">
-      <span>What is <span class="purpleTxt">@pau</span> trying to say?</span>
+    <div class="guessReveal">
+      <span><span class="purpleTxt creatorName">@{{this.gameCreator}}</span> said:</span>
+      <br>
+      <span>"{{state.gameData.guess}}"</span>
     </div>
-    <div class="emojisToGuess">
-      <span>👺😹🙏🗿</span>
+    <div>
+      
     </div>
-    <div class="hintGuess">
-      <span class="hintTitle">Hint:</span>
-      <span class="hint purpleTxt">"Lorem ipsum lorem ipsum"</span>
-    </div>
-    <span id="separatorLine"><span></span></span>
-    <div class="playerAnswer">
-      <div class="txtAnswer">
-        <span>Your answer:</span>
-        <textarea v-model="guessing.txtPlayerAnswer" type="text" placeholder="" />
-      </div>
-      <div class="emojisAnswer">
-        <span>Your emoji recreation:</span>
-        <div class="emojiAnswersWraper">
-          <div>
-            <span class="cameraWrapper" ref="test">
-              <span class="emojiInsideCamera">👺</span>
-              <video v-show="!isPhotoTaken1" ref="camera1" autoplay playsinline @click="takePhoto1"></video>
-              <canvas v-show="isPhotoTaken1" id="photoTaken1" ref="canvas1"></canvas>
-            </span>
-            <span class="cameraWrapper">
-              <span class="emojiInsideCamera">😹</span>
-              <video v-show="isPhotoTaken1 && !isPhotoTaken2" ref="camera2" autoplay playsinline @click="takePhoto2"></video>
-              <canvas v-show="isPhotoTaken2" id="photoTaken2" ref="canvas2"></canvas>
-            </span>
-          </div>
-          <div>
-            <span class="cameraWrapper">
-              <span class="emojiInsideCamera">🙏</span>
-              <video v-show="isPhotoTaken2 && !isPhotoTaken3" ref="camera3" autoplay playsinline @click="takePhoto3"></video>
-              <canvas v-show="isPhotoTaken3" id="photoTaken3" ref="canvas3"></canvas>
-            </span>
-            <span class="cameraWrapper">
-              <span class="emojiInsideCamera">🗿</span>
-              <video v-show="isPhotoTaken3 && !isPhotoTaken4" ref="camera4" autoplay playsinline @click="takePhoto4"></video>
-              <canvas v-show="isPhotoTaken4" id="photoTaken4" ref="canvas4"></canvas>
-            </span>
-          </div>
-        </div>
-      </div>
-      <button class="submitBtn" @click="submitGuessing()" :disabled="guessing.txtPlayerAnswer===null || guessing.txtPlayerAnswer==='' || !isPhotoTaken1 || !isPhotoTaken2 || !isPhotoTaken3 || !isPhotoTaken4">SUBMIT</button>
+    <div class="guesses">
+      <guess-component :guess="state.guessing" :yourself="true" />
+      <guess-component v-for="guess in state.guesses" :key="guess.id" :guess="guess" :yourself="false" />
     </div>
   </div>
 </template>
 
 <script>
-import store from "../../store/index.js"
+import store from "../../store"
+import axios from 'axios'
+import GuessComponent from '../../components/GuessComponent'
 
 export default {
-  name: 'PSubmitedGuess',
+  name: 'PSubmitGuess',
   data() {
     return {
-      isPhotoTaken1: false,
-      isPhotoTaken2: false,
-      isPhotoTaken3: false,
-      isPhotoTaken4: false,
-      isShotPhoto: false,
-      isLoading: false,
+      state: store.state,
 
-      guessing: {
-        txtPlayerAnswer: '',
-        photos: {
-          photo1: '',
-          photo2: '',
-          photo3: '',
-          photo4: '',
-        }
-      }
+      gameCreator: ''
     }
   },
   components: {
+    GuessComponent
   },
   mounted: function() {
-    this.createCameraElement(this.$refs.camera1);
+    this.getGuesses();
+    this.getGameCreatorName(this.state.gameData.idCreator);
   },
   methods: {
-    submitGuessing() {
-      store.commit('submitGuessing', this.guessing);
-    },
-    async createCameraElement(refRecieved) {
-      this.isLoading = true;
-      
-      const constraints = (window.constraints = {
-				audio: false,
-				video: {
-          facingMode: 'user',
+    getGameCreatorName(idCreator) {
+      axios.get("http://127.0.0.1:8081/api/users/"+idCreator, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
         }
-			});
-
-			await navigator.mediaDevices
-				.getUserMedia(constraints)
-				.then(stream => {
-          this.isLoading = false;
-					refRecieved.srcObject = stream;
-				})
-				.catch(e => {
-          this.isLoading = false;
-					alert("May the browser didn't support or there is some errors." + e);
-				});
+      })
+      .then((response) => {
+        if(response.status == 200) {
+          this.gameCreator = response.data.username
+        }
+      })
+        .catch((error) => {
+        console.log(error)
+      });
     },
-    stopCameraStream(refRecieved) {
-      let tracks = refRecieved.srcObject.getTracks();
-
-			tracks.forEach(track => {
-				track.stop();
-			});
-    },
-    takePhoto1() {
-      this.isPhotoTaken1 = !this.isPhotoTaken1;
-      
-      const camera = this.$refs.camera1;
-      const canvas = this.$refs.canvas1;
-      const context = canvas.getContext('2d');
-      let scale = 300 / camera.videoWidth;
-      let w = camera.videoWidth * scale;
-      let h = camera.videoHeight * scale;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      context.drawImage(camera, 0, 0, w, h);
-      this.guessing.photos.photo1 = canvas.toDataURL();
-      
-      this.createCameraElement(this.$refs.camera2);
-      this.stopCameraStream(camera);
-    },
-    takePhoto2() {
-      if(!this.isPhotoTaken2) {
-        this.isShotPhoto2 = true;
-
-        const FLASH_TIMEOUT = 50;
-
-        setTimeout(() => {
-          this.isShotPhoto2 = false;
-        }, FLASH_TIMEOUT);
-      }
-      
-      this.isPhotoTaken2 = !this.isPhotoTaken2;
-      
-      const camera = this.$refs.camera2;
-      const canvas = this.$refs.canvas2;
-      const context = canvas.getContext('2d');
-      let scale = 300 / camera.videoWidth;
-      let w = camera.videoWidth * scale;
-      let h = camera.videoHeight * scale;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      context.drawImage(camera, 0, 0, w, h);
-      this.guessing.photos.photo2 = canvas.toDataURL();
-      
-      this.createCameraElement(this.$refs.camera3);
-      this.stopCameraStream(camera);
-    },
-    takePhoto3() {
-      if(!this.isPhotoTaken3) {
-        this.isShotPhoto3 = true;
-
-        const FLASH_TIMEOUT = 50;
-
-        setTimeout(() => {
-          this.isShotPhoto3 = false;
-        }, FLASH_TIMEOUT);
-      }
-      
-      this.isPhotoTaken3 = !this.isPhotoTaken3;
-      
-      const camera = this.$refs.camera3;
-      const canvas = this.$refs.canvas3;
-      const context = canvas.getContext('2d');
-      let scale = 300 / camera.videoWidth;
-      let w = camera.videoWidth * scale;
-      let h = camera.videoHeight * scale;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      context.drawImage(camera, 0, 0, w, h);
-      this.guessing.photos.photo3 = canvas.toDataURL();
-
-      this.createCameraElement(this.$refs.camera4);
-      this.stopCameraStream(camera);
-    },
-    takePhoto4() {
-      if(!this.isPhotoTaken4) {
-        this.isShotPhoto4 = true;
-
-        const FLASH_TIMEOUT = 50;
-
-        setTimeout(() => {
-          this.isShotPhoto4 = false;
-        }, FLASH_TIMEOUT);
-      }
-      
-      this.isPhotoTaken4 = !this.isPhotoTaken4;
-      
-      const camera = this.$refs.camera4;
-      const canvas = this.$refs.canvas4;
-      const context = canvas.getContext('2d');
-      let scale = 300 / camera.videoWidth;
-      let w = camera.videoWidth * scale;
-      let h = camera.videoHeight * scale;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      context.drawImage(camera, 0, 0, w, h);
-      this.guessing.photos.photo4 = canvas.toDataURL();
-
-      this.stopCameraStream(camera);
+    getGuesses() {
+      store.commit('getGuesses');
     }
   }
 }
@@ -232,8 +71,20 @@ export default {
   display: flex;
   flex-flow: column;
   /* justify-content: center; */
-  align-items: start;
+  align-items: center;
 }
+.guessReveal {
+  font-size: 7vw;
+  font-weight: 900;
+  color: #D1D1D1;
+  text-align: start;
+  padding: 12vw 6vw 4vw 6vw;
+}
+  .guessReveal .creatorName {
+    font-size: 10vw;
+  }
+
+
   .titleQuestion {
     font-size: 10vw;
     font-weight: 900;
@@ -249,7 +100,7 @@ export default {
     margin: 0 4vw;
   }
     .emojisToGuess span {
-      font-size: 17vw;
+      font-size: 15vw;
     }
 
   .hintGuess {

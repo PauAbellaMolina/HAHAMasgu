@@ -22,7 +22,7 @@
         <div class="emojiAnswersWraper">
           <div>
             <span class="cameraWrapper" ref="test">
-              <span class="emojiInsideCamera">👺</span>
+              <span class="emojiInsideCamera">{{state.gameData.emoji1}}</span>
               <video v-show="!isPhotoTaken1" ref="camera1" autoplay playsinline @click="takePhoto1"></video>
               <canvas v-show="isPhotoTaken1" id="photoTaken1" ref="canvas1"></canvas>
             </span>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import store from "../../store/index.js"
+import store from "../../store"
 import axios from 'axios'
 
 export default {
@@ -67,6 +67,7 @@ export default {
       isLoading: false,
 
       guessing: {
+        idUser: store.state.idUser,
         txtPlayerAnswer: '',
         photos: {
           photo1: '',

@@ -15,6 +15,7 @@ const store = new Vuex.Store({
     userName: '',
     gameData: null,
     guessing: null,
+    guesses: [],
     socket: null
   },
   mutations: {
@@ -139,12 +140,29 @@ const store = new Vuex.Store({
       })
       .then((response) => {
         console.log(response);
+        state.socket.emit('newGuessingSubmitted');
         // if(response.)
-        // router.push("/player-submited-guess");
+        router.push("/player-submited-guess");
       })
         .catch((error) => {
         console.log(error)
       });
+    },
+
+    getGuesses(state) {
+      axios.get("http://127.0.0.1:8081/api/guesses/notMine/"+state.gameData.id+"/"+state.idUser, 
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((response) => {
+            state.guesses = response.data
+            console.log(state.guessing);
+          })
+            .catch((error) => {
+            console.log(error)
+          });
     }
   },
   actions: {
