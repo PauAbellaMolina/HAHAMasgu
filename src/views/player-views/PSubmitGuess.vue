@@ -27,19 +27,19 @@
               <canvas v-show="isPhotoTaken1" id="photoTaken1" ref="canvas1"></canvas>
             </span>
             <span class="cameraWrapper">
-              <span class="emojiInsideCamera">😹</span>
+              <span class="emojiInsideCamera">{{state.gameData.emoji2}}</span>
               <video v-show="isPhotoTaken1 && !isPhotoTaken2" ref="camera2" autoplay playsinline @click="takePhoto2"></video>
               <canvas v-show="isPhotoTaken2" id="photoTaken2" ref="canvas2"></canvas>
             </span>
           </div>
           <div>
             <span class="cameraWrapper">
-              <span class="emojiInsideCamera">🙏</span>
+              <span class="emojiInsideCamera">{{state.gameData.emoji3}}</span>
               <video v-show="isPhotoTaken2 && !isPhotoTaken3" ref="camera3" autoplay playsinline @click="takePhoto3"></video>
               <canvas v-show="isPhotoTaken3" id="photoTaken3" ref="canvas3"></canvas>
             </span>
             <span class="cameraWrapper">
-              <span class="emojiInsideCamera">🗿</span>
+              <span class="emojiInsideCamera">{{state.gameData.emoji4}}</span>
               <video v-show="isPhotoTaken3 && !isPhotoTaken4" ref="camera4" autoplay playsinline @click="takePhoto4"></video>
               <canvas v-show="isPhotoTaken4" id="photoTaken4" ref="canvas4"></canvas>
             </span>

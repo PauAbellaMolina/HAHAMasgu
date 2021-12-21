@@ -80,37 +80,46 @@ const store = new Vuex.Store({
             console.log("room joined correctly");
           });
 
-          //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
-          axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id+"/"+state.idUser, 
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-          .then((response) => {
-            // console.log(response);
+          // console.log(state.gameData);
 
-            //RESPOSE.DATA.LENGTH > 1 IF USER ALREADY SUMBITED A GUESS TO THAT ROOM
-            if(response.data.length > 0) {
-              state.guessing = {
-                                  txtPlayerAnswer: response.data[0].guessing,
-                                  photos: {
-                                    photo1: response.data[0].photo1,
-                                    photo2: response.data[0].photo2,
-                                    photo3: response.data[0].photo3,
-                                    photo4: response.data[0].photo4,
+          store.commit('getGuesses');
+
+          //If user entering is the creator of the room
+          if(state.gameData.idCreator == state.idUser) {
+            console.log("creator");
+          } else { //Is player
+            //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
+            axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id+"/"+state.idUser, 
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then((response) => {
+              // console.log(response);
+
+              //RESPOSE.DATA.LENGTH > 1 IF USER ALREADY SUMBITED A GUESS TO THAT ROOM
+              if(response.data.length > 0) {
+                state.guessing = {
+                                    txtPlayerAnswer: response.data[0].guessing,
+                                    photos: {
+                                      photo1: response.data[0].photo1,
+                                      photo2: response.data[0].photo2,
+                                      photo3: response.data[0].photo3,
+                                      photo4: response.data[0].photo4,
+                                    }
                                   }
-                                }
-              
-              router.push("/player-submited-guess"); //Redirect to submited screen
-            } else {
-              router.push("/player-submit-guess"); //Redirect to player submit guess
-            }
+                
+                router.push("/player-submited-guess"); //Redirect to submited screen
+              } else {
+                router.push("/player-submit-guess"); //Redirect to player submit guess
+              }
 
-          })
-            .catch((error) => {
-            console.log(error)
-          });
+            })
+              .catch((error) => {
+              console.log(error)
+            });
+          }
         }
       })
         .catch((error) => {
@@ -141,7 +150,7 @@ const store = new Vuex.Store({
       .then((response) => {
         console.log(response);
         state.socket.emit('newGuessingSubmitted');
-        // if(response.)
+        
         router.push("/player-submited-guess");
       })
         .catch((error) => {
@@ -158,7 +167,6 @@ const store = new Vuex.Store({
           })
           .then((response) => {
             state.guesses = response.data
-            console.log(state.guessing);
           })
             .catch((error) => {
             console.log(error)

@@ -32,8 +32,18 @@ export default {
   components: {
     GuessComponent
   },
+  sockets: {
+    test() {
+      console.log('test')
+    },
+    newGuess() {
+      store.commit('getGuesses');
+      console.log('socket said newGuess.')
+      console.log(this.state.guesses)
+    },
+  },
   mounted: function() {
-    this.getGuesses();
+    // this.getGuesses();
     this.getGameCreatorName(this.state.gameData.idCreator);
   },
   methods: {
@@ -53,9 +63,6 @@ export default {
         console.log(error)
       });
     },
-    getGuesses() {
-      store.commit('getGuesses');
-    }
   }
 }
 </script>
