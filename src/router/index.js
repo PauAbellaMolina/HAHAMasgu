@@ -53,6 +53,18 @@ const routes = [
         router.push("/login")
       }
    }
+  },
+  {
+    path: '/winner-view',
+    name: 'WinnerView',
+    component: () => import('../views/common-views/WinnerView.vue'),
+    beforeEnter (to, from, next) {
+      if(store.state.logged) {
+        next()
+      } else {
+        router.push("/login")
+      }
+   }
   }
 ]
 

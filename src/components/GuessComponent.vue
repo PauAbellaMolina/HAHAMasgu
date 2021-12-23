@@ -28,7 +28,7 @@
         </div>
       </div>
     </div>
-    <div v-else class="wrapper">
+    <div v-if="!yourself && guess.idUser != state.idUser" class="wrapper">
       <div class="userNameWrapper">
         <span class="purpleTxt userName">@{{userName}}</span>
       </div>

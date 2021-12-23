@@ -16,6 +16,7 @@ const store = new Vuex.Store({
     gameData: null,
     guessing: null,
     guesses: [],
+    allGuesses: [],
     socket: null
   },
   mutations: {
@@ -70,55 +71,57 @@ const store = new Vuex.Store({
         //RESPOSE.DATA.LENGTH > 1 IF GAME FOUND
         if(response.data.length > 0) {
           state.gameData = response.data[0];
-          // console.log(state);
           
-          //CONNECT USER TO ROOM ON SOCKET SERVER
-          const room = state.gameData.id;
-          state.socket.emit('room', room);
-          //If joined correctly, show it
-          state.socket.on('roomJoined', () => {
-            console.log("room joined correctly");
-          });
-
-          // console.log(state.gameData);
-
           store.commit('getGuesses');
 
-          //If user entering is the creator of the room
-          if(state.gameData.idCreator == state.idUser) {
-            console.log("creator");
-          } else { //Is player
-            //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
-            axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id+"/"+state.idUser, 
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-            .then((response) => {
-              // console.log(response);
-
-              //RESPOSE.DATA.LENGTH > 1 IF USER ALREADY SUMBITED A GUESS TO THAT ROOM
-              if(response.data.length > 0) {
-                state.guessing = {
-                                    txtPlayerAnswer: response.data[0].guessing,
-                                    photos: {
-                                      photo1: response.data[0].photo1,
-                                      photo2: response.data[0].photo2,
-                                      photo3: response.data[0].photo3,
-                                      photo4: response.data[0].photo4,
-                                    }
-                                  }
-                
-                router.push("/player-submited-guess"); //Redirect to submited screen
-              } else {
-                router.push("/player-submit-guess"); //Redirect to player submit guess
-              }
-
-            })
-              .catch((error) => {
-              console.log(error)
+          //IF WINNER ID IS 0 MEANS THE GAME IS STILL GOING ON
+          if(state.gameData.idWinner === 0) {
+            //CONNECT USER TO ROOM ON SOCKET SERVER
+            const room = state.gameData.id;
+            state.socket.emit('room', room);
+            //If joined correctly, show it
+            state.socket.on('roomJoined', () => {
+              console.log("room joined correctly");
             });
+
+            //If user entering is the creator of the room
+            if(state.gameData.idCreator == state.idUser) {
+              console.log("creator");
+            } else { //Is player
+              //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
+              axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id+"/"+state.idUser, 
+              {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+              .then((response) => {
+                // console.log(response);
+
+                //RESPOSE.DATA.LENGTH > 1 IF USER ALREADY SUMBITED A GUESS TO THAT ROOM
+                if(response.data.length > 0) {
+                  state.guessing = {
+                                      txtPlayerAnswer: response.data[0].guessing,
+                                      photos: {
+                                        photo1: response.data[0].photo1,
+                                        photo2: response.data[0].photo2,
+                                        photo3: response.data[0].photo3,
+                                        photo4: response.data[0].photo4,
+                                      }
+                                    }
+                  
+                  router.push("/player-submited-guess"); //Redirect to submited screen
+                } else {
+                  router.push("/player-submit-guess"); //Redirect to player submit guess
+                }
+
+              })
+                .catch((error) => {
+                console.log(error)
+              });
+            }
+          } else { //HERE MEANS THERE IS A WINNER AND SO THE GAME IS FINISHED
+            router.push("/winner-view");
           }
         }
       })
@@ -159,18 +162,31 @@ const store = new Vuex.Store({
     },
 
     getGuesses(state) {
-      axios.get("http://127.0.0.1:8081/api/guesses/notMine/"+state.gameData.id+"/"+state.idUser, 
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-          .then((response) => {
-            state.guesses = response.data
-          })
-            .catch((error) => {
-            console.log(error)
-          });
+      // axios.get("http://127.0.0.1:8081/api/guesses/notMine/"+state.gameData.id+"/"+state.idUser, 
+      // {
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // })
+      // .then((response) => {
+      //   state.guesses = response.data
+      // })
+      //   .catch((error) => {
+      //   console.log(error)
+      // });
+
+      axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        state.guesses = response.data
+      })
+        .catch((error) => {
+        console.log(error)
+      });
     }
   },
   actions: {
