@@ -1,9 +1,15 @@
 <template>
   <div class="pageWrapper">
+    <div v-if="state.gameData.idCreator == state.idUser" class="gameCodeWrapper">
+      <span class="gameCodeTitle">Game Code: </span>
+      <span class="gameCode purpleTxt">{{state.gameData.gameCode}}</span>
+      <span id="separatorLine"><span></span></span>
+    </div>
     <div class="guessReveal">
-      <span><span class="purpleTxt creatorName">@{{this.gameCreator}}</span> said:</span>
+      <!-- <span><span class="purpleTxt creatorName">@{{this.gameCreator}}</span> said:</span>
       <br>
-      <span>"{{state.gameData.guess}}"</span>
+      <span>"{{state.gameData.guess}}"</span> -->
+      <span class="submissionsTitle">Submissions:</span>
     </div>
 
     <div class="guesses">
@@ -36,6 +42,9 @@ export default {
   sockets: {
     newGuess() {
       store.commit("getGuesses")
+    },
+    winnerPicked() {
+      store.commit("getGameData")
     },
   },
   mounted: function() {
@@ -75,15 +84,33 @@ export default {
   /* justify-content: center; */
   align-items: center;
 }
+.gameCodeWrapper {
+  display: flex;
+  flex-flow: column;
+  width: 90%;
+  margin: 8vw 0 0 0;
+}
+  .gameCodeTitle {
+    font-weight: 900;
+    font-size: 8vw;
+    color: #D1D1D1;
+  }
+  .gameCode {
+    font-weight: 900;
+    font-size: 15vw;
+    margin: 0 0 3vw 0;
+}
 .guessReveal {
   font-size: 7vw;
   font-weight: 900;
   color: #D1D1D1;
   text-align: start;
-  padding: 12vw 6vw 4vw 6vw;
+  margin: 8vw 0 4vw 0;
+  width: 100%;
 }
-  .guessReveal .creatorName {
+  .guessReveal .submissionsTitle {
     font-size: 10vw;
+    margin: 0 6vw 0 6vw;
   }
 
 

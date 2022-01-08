@@ -70,7 +70,7 @@ export default {
   //   },
   // },
   mounted: function() {
-    this.getGameWinnerGuess(this.state); 
+    this.getGameWinnerGuess(this.state);
     this.getGameCreatorName(this.state.gameData.idCreator);
     this.getGameWinnerName(this.state.gameData.idWinner);
   },

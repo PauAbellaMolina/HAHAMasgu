@@ -31,6 +31,7 @@
     <div v-if="!yourself && guess.idUser != state.idUser" class="wrapper">
       <div class="userNameWrapper">
         <span class="purpleTxt userName">@{{userName}}</span>
+        <span v-if="state.gameData.idCreator == state.idUser" @click="pickWinner(guess.idUser)" class="purpleTxt pickWinner">🏆</span>
       </div>
       <span class="guessing">"{{guess.guessing}}"</span>
       <div class="photosParentWrapper">
@@ -99,6 +100,9 @@ export default {
         });
       }
     },
+    pickWinner(idWinner) {
+      store.commit("pickWinner", idWinner)
+    }
   }
 }
 </script>
@@ -120,11 +124,15 @@ export default {
 }
   .userNameWrapper {
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     width: 100%;
   }
     .userName {
       font-size: 7.5vw;
+      font-weight: 900;
+    }
+    .pickWinner {
+      font-size: 10vw;
       font-weight: 900;
     }
   .guessing {

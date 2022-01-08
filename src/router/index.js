@@ -45,7 +45,7 @@ const routes = [
   {
     path: '/player-submited-guess',
     name: 'PlayerSubmitedGuess',
-    component: () => import('../views/player-views/PSubmitedGuess.vue'),
+    component: () => import('../views/common-views/PSubmitedGuess.vue'),
     beforeEnter (to, from, next) {
       if(store.state.logged) {
         next()

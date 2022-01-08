@@ -86,7 +86,8 @@ const store = new Vuex.Store({
 
             //If user entering is the creator of the room
             if(state.gameData.idCreator == state.idUser) {
-              console.log("creator");
+              console.log(state.gameData.gameCode);
+              router.push("/player-submited-guess");
             } else { //Is player
               //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
               axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id+"/"+state.idUser, 
@@ -183,6 +184,43 @@ const store = new Vuex.Store({
       })
       .then((response) => {
         state.guesses = response.data
+      })
+        .catch((error) => {
+        console.log(error)
+      });
+    },
+
+    pickWinner(state, idWinner) {
+      axios.post("http://127.0.0.1:8081/api/games/pickWinner/"+state.gameData.id+"/"+idWinner, 
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => {
+          if(response.status == 200) {
+            store.state.gameData.idWinner = response.data[0];
+            state.socket.emit('winnerPicked');
+            router.push("/winner-view");
+            // console.log(response)
+          }
+        })
+          .catch((error) => {
+          console.log(error)
+        });
+    },
+
+    getGameData(state) {
+      axios.get("http://127.0.0.1:8081/api/games/"+state.gameData.id, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        console.log(response)
+        state.gameData = response.data[0];
+        router.push("/winner-view");
       })
         .catch((error) => {
         console.log(error)
