@@ -8,16 +8,15 @@
     </div>
     <div class="joinInputs">
       <input v-model="gameCodeRequestJoin" type="number" placeholder="CODE">
-      <button class="joinBtn" @click="test()">JOIN</button>
+      <button class="joinBtn" @click="join()" :disabled="gameCodeRequestJoin === '' || gameCodeRequestJoin === null">JOIN</button>
       <span class="separator" />
-      <button class="createBtn">CREATE</button>
+      <button class="createBtn" @click="$router.push('/player-submit-guess')">CREATE</button>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
+import store from '../store'
 
 export default {
   name: 'Homepage',
@@ -29,11 +28,23 @@ export default {
   components: {
     // HelloWorld
   },
+  // sockets: {
+  //   connect() {
+  //     console.log('socket connected')
+  //   },
+  //   customEmit() {
+  //     console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+  //   },
+  //   test() {
+  //     console.log('test')
+  //   }
+  // },
   methods: {
-    test() {
-      console.log(this.gameCodeRequestJoin);
+    join() {
+      // this.$socket.client.emit('test');
+      store.commit('enterGameRoom', this.gameCodeRequestJoin);
     }
-  }
+  },
 }
 </script>
 
@@ -49,7 +60,7 @@ export default {
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
 }
   .title {
     display: flex;
@@ -99,6 +110,10 @@ export default {
         color: #DBDBDB;
         border-radius: 8vw;
         height: 23vw;
+      }
+      .joinInputs .joinBtn:disabled {
+        background-color: #19269b;
+        color: #a8a8a8;
       }
       .joinInputs .createBtn {
         font-size: 11vw;

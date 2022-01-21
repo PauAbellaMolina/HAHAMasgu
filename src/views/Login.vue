@@ -6,32 +6,35 @@
       <span class="titleEmojis">👺😹🙏🗿</span>
     </div>
     <div class="loginInputs">
-      <input v-model="name" type="text" placeholder="@name">
+      <input v-model="data.name" type="text" placeholder="@name">
       <span class="separator" />
-      <input v-model="pin" type="number" placeholder="pin">
+      <input v-model="data.pin" type="number" placeholder="pin">
       <span class="separator" />
-      <button class="goinBtn" @click="test()">GO IN</button>
+      <button class="goinBtn" @click="login()" :disabled="data.name === '' || data.name === null || data.pin === '' || data.pin === null">GO IN</button>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
+import store from '../store'
 
 export default {
   name: 'Login',
   data() {
     return {
-      name: null,
-      pin: null
+      data: {
+        name: null,
+        pin: null
+      }
     }
   },
   components: {
-    // HelloWorld
+    
   },
   methods: {
-    
+    login() {
+      store.commit('tryLoging', this.data);
+    }
   }
 }
 </script>
@@ -48,7 +51,7 @@ export default {
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
 }
   .title {
     display: flex;
@@ -96,5 +99,9 @@ export default {
         border-radius: 9vw;
         height: 35vw;
         margin: 2.5vw 0 0 0;
+      }
+      .loginInputs .goinBtn:disabled {
+        background-color: #19269b;
+        color: #a8a8a8;
       }
 </style>

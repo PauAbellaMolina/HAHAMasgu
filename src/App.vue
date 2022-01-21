@@ -16,7 +16,7 @@
 
 body {
   margin: 0;
-  height: 100vh;
+  background-color: #13233B;
 }
 
 #app {
@@ -25,7 +25,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: 100%;
+  /* height: 100%; */
   background-color: #13233B;
+}
+
+#separatorLine {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+  #separatorLine span {
+    border: 1vw solid #272F75;
+    border-radius: 100vw;
+    display: block;
+    width: 85%;
+  }
+
+.purpleTxt {
+  color: #9381FF !important;
 }
 </style>
