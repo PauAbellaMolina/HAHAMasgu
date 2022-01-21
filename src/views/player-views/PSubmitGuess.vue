@@ -4,7 +4,6 @@
       <span>What is <span class="purpleTxt">@{{this.gameCreator}}</span> trying to say?</span>
     </div>
     <div class="emojisToGuess">
-      <!-- <span>👺😹🙏🗿</span> -->
       <span>{{state.gameData.emoji1}}{{state.gameData.emoji2}}{{state.gameData.emoji3}}{{state.gameData.emoji4}}</span>
     </div>
     <div class="hintGuess">
@@ -90,7 +89,7 @@ export default {
   },
   methods: {
     getGameCreatorName(idCreator) {
-      axios.get("http://127.0.0.1:8081/api/users/"+idCreator, 
+      axios.get(process.env.API_URL+"/api/users/"+idCreator, 
       {
         headers: {
           'Content-Type': 'application/json'

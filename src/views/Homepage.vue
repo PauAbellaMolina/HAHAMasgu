@@ -10,7 +10,7 @@
       <input v-model="gameCodeRequestJoin" type="number" placeholder="CODE">
       <button class="joinBtn" @click="join()" :disabled="gameCodeRequestJoin === '' || gameCodeRequestJoin === null">JOIN</button>
       <span class="separator" />
-      <button class="createBtn" @click="$router.push('/player-submit-guess')">CREATE</button>
+      <button class="createBtn" @click="$router.push('/create-game')">CREATE</button>
     </div>
   </div>
 </template>
@@ -26,22 +26,10 @@ export default {
     }
   },
   components: {
-    // HelloWorld
+    
   },
-  // sockets: {
-  //   connect() {
-  //     console.log('socket connected')
-  //   },
-  //   customEmit() {
-  //     console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
-  //   },
-  //   test() {
-  //     console.log('test')
-  //   }
-  // },
   methods: {
     join() {
-      // this.$socket.client.emit('test');
       store.commit('enterGameRoom', this.gameCodeRequestJoin);
     }
   },
@@ -49,9 +37,6 @@ export default {
 </script>
 
 <style scoped>
-* {
-  /* border: 1px solid red; */
-}
 .separator {
   margin: 3.5vw 0;
 }

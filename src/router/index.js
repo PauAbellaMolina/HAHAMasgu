@@ -65,6 +65,18 @@ const routes = [
         router.push("/login")
       }
    }
+  },
+  {
+    path: '/create-game',
+    name: 'CreateGame',
+    component: () => import('../views/creator-views/CreateGame.vue'),
+    beforeEnter (to, from, next) {
+      if(store.state.logged) {
+        next()
+      } else {
+        router.push("/login")
+      }
+   }
   }
 ]
 
