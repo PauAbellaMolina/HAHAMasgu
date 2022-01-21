@@ -4,7 +4,6 @@
       <span>What is <span class="purpleTxt">@{{this.gameCreator}}</span> trying to say?</span>
     </div>
     <div class="emojisToGuess">
-      <!-- <span>👺😹🙏🗿</span> -->
       <span>{{state.gameData.emoji1}}{{state.gameData.emoji2}}{{state.gameData.emoji3}}{{state.gameData.emoji4}}</span>
     </div>
     <div class="hintGuess">

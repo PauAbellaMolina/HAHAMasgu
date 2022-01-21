@@ -86,7 +86,7 @@ const store = new Vuex.Store({
 
             //If user entering is the creator of the room
             if(state.gameData.idCreator == state.idUser) {
-              console.log(state.gameData.gameCode);
+              // console.log(state.gameData.gameCode);
               router.push("/player-submited-guess");
             } else { //Is player
               //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
@@ -161,21 +161,39 @@ const store = new Vuex.Store({
         console.log(error)
       });
     },
+  
+    //Called from create game button on CreateGame.vue /create-game
+    submitNewGame(state, game) {
+      const gameAux = {
+        idCreator: state.idUser,
+        guess: game.txtGuessing,
+        hint: game.txtHint,
+        emoji1: game.txtEmoji1,
+        emoji2: game.txtEmoji2,
+        emoji3: game.txtEmoji3,
+        emoji4: game.txtEmoji4,
+        idWinner: 0,
+      };
+
+      const body = JSON.stringify({ gameAux });
+
+      axios.post("http://127.0.0.1:8081/api/games", body, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        console.log(response);
+        state.gameData = response.data;
+        store.commit('enterGameRoom', response.data.gameCode);
+      })
+        .catch((error) => {
+        console.log(error)
+      });
+    },
 
     getGuesses(state) {
-      // axios.get("http://127.0.0.1:8081/api/guesses/notMine/"+state.gameData.id+"/"+state.idUser, 
-      // {
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   }
-      // })
-      // .then((response) => {
-      //   state.guesses = response.data
-      // })
-      //   .catch((error) => {
-      //   console.log(error)
-      // });
-
       axios.get("http://127.0.0.1:8081/api/guesses/"+state.gameData.id, 
       {
         headers: {
@@ -201,8 +219,6 @@ const store = new Vuex.Store({
           if(response.status == 200) {
             store.state.gameData.idWinner = response.data[0];
             state.socket.emit('winnerPicked');
-            router.push("/winner-view");
-            // console.log(response)
           }
         })
           .catch((error) => {
@@ -218,7 +234,6 @@ const store = new Vuex.Store({
         }
       })
       .then((response) => {
-        console.log(response)
         state.gameData = response.data[0];
         router.push("/winner-view");
       })
