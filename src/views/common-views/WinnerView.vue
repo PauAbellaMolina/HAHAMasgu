@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     getGameCreatorName(idCreator) {
-      axios.get(process.env.API_URL+"/api/users/"+idCreator, 
+      axios.get(process.env.VUE_APP_API_URL+"/api/users/"+idCreator, 
       {
         headers: {
           'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ export default {
       });
     },
     getGameWinnerName(idWinner) {
-      axios.get(process.env.API_URL+"/api/users/"+idWinner, 
+      axios.get(process.env.VUE_APP_API_URL+"/api/users/"+idWinner, 
       {
         headers: {
           'Content-Type': 'application/json'
@@ -109,7 +109,7 @@ export default {
     },
 
     getGameWinnerGuess(state) {
-      axios.get(process.env.API_URL+"/api/guesses/"+state.gameData.id+"/"+state.gameData.idWinner, 
+      axios.get(process.env.VUE_APP_API_URL+"/api/guesses/"+state.gameData.id+"/"+state.gameData.idWinner, 
       {
         headers: {
           'Content-Type': 'application/json'

@@ -22,7 +22,7 @@ const store = new Vuex.Store({
   mutations: {
     //Create a socket instance and save it in state. Called from router (Homepage (/))
     createSocketConnection(state) {
-      const socket = io(process.env.SOCKET_IO_URL);
+      const socket = io(process.env.VUE_APP_SOCKET_IO_URL);
       Vue.use(VueSocketIOExt, socket)
       state.socket = socket;
       console.log("user connected to socket")
@@ -32,7 +32,7 @@ const store = new Vuex.Store({
     tryLoging(state, data) {
       const body = JSON.stringify({ data });
 
-      axios.post(process.env.API_URL+"/api/users/try-loging", body, 
+      axios.post(process.env.VUE_APP_API_URL+"/api/users/try-loging", body, 
       {
         headers: {
           'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ const store = new Vuex.Store({
     enterGameRoom(state, gameCodeRequest) {
       const body = JSON.stringify({ gameCodeRequest });
 
-      axios.post(process.env.API_URL+"/api/games/enter-game-room", body, 
+      axios.post(process.env.VUE_APP_API_URL+"/api/games/enter-game-room", body, 
       {
         headers: {
           'Content-Type': 'application/json'
@@ -90,7 +90,7 @@ const store = new Vuex.Store({
               router.push("/player-submited-guess");
             } else { //Is player
               //CHECK IF USER HAS ALREADY MADE A SUBMIT IN THAT ROOM BEFORE, IF NOT, REDIRECT AS FOLLOWING
-              axios.get(process.env.API_URL+"/api/guesses/"+state.gameData.id+"/"+state.idUser, 
+              axios.get(process.env.VUE_APP_API_URL+"/api/guesses/"+state.gameData.id+"/"+state.idUser, 
               {
                 headers: {
                   'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ const store = new Vuex.Store({
 
       const body = JSON.stringify({ stateAux });
 
-      axios.post(process.env.API_URL+"/api/guesses", body, 
+      axios.post(process.env.VUE_APP_API_URL+"/api/guesses", body, 
       {
         headers: {
           'Content-Type': 'application/json'
@@ -177,7 +177,7 @@ const store = new Vuex.Store({
 
       const body = JSON.stringify({ gameAux });
 
-      axios.post(process.env.API_URL+"/api/games", body, 
+      axios.post(process.env.VUE_APP_API_URL+"/api/games", body, 
       {
         headers: {
           'Content-Type': 'application/json'
@@ -194,7 +194,7 @@ const store = new Vuex.Store({
     },
 
     getGuesses(state) {
-      axios.get(process.env.API_URL+"/api/guesses/"+state.gameData.id, 
+      axios.get(process.env.VUE_APP_API_URL+"/api/guesses/"+state.gameData.id, 
       {
         headers: {
           'Content-Type': 'application/json'
@@ -209,7 +209,7 @@ const store = new Vuex.Store({
     },
 
     pickWinner(state, idWinner) {
-      axios.post(process.env.API_URL+"/api/games/pickWinner/"+state.gameData.id+"/"+idWinner, 
+      axios.post(process.env.VUE_APP_API_URL+"/api/games/pickWinner/"+state.gameData.id+"/"+idWinner, 
         {
           headers: {
             'Content-Type': 'application/json'
@@ -227,7 +227,7 @@ const store = new Vuex.Store({
     },
 
     getGameData(state) {
-      axios.get(process.env.API_URL+"/api/games/"+state.gameData.id, 
+      axios.get(process.env.VUE_APP_API_URL+"/api/games/"+state.gameData.id, 
       {
         headers: {
           'Content-Type': 'application/json'

@@ -84,7 +84,7 @@ export default {
       if(this.yourself) {
         this.userName = 'you'
       } else {
-        axios.get(process.env.API_URL+"/api/users/"+idCreator, 
+        axios.get(process.env.VUE_APP_API_URL+"/api/users/"+idCreator, 
         {
           headers: {
             'Content-Type': 'application/json'
