@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     getGameCreatorName(idCreator) {
-      axios.get("http://127.0.0.1:8081/api/users/"+idCreator, 
+      axios.get(process.env.API_URL+"/api/users/"+idCreator, 
       {
         headers: {
           'Content-Type': 'application/json'
