@@ -6,6 +6,8 @@ import router from '../router'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import { io } from 'socket.io-client'
 
+require('dotenv').config()
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
