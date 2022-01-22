@@ -45,7 +45,7 @@
           </div>
         </div>
       </div>
-      <button class="submitBtn" @click="submitGuessing()" :disabled="guessing.txtPlayerAnswer===null || guessing.txtPlayerAnswer==='' || !isPhotoTaken1 || !isPhotoTaken2 || !isPhotoTaken3 || !isPhotoTaken4">SUBMIT</button>
+      <button class="submitBtn" @click="submitGuessing()" :disabled="submited || guessing.txtPlayerAnswer===null || guessing.txtPlayerAnswer==='' || !isPhotoTaken1 || !isPhotoTaken2 || !isPhotoTaken3 || !isPhotoTaken4">SUBMIT</button>
     </div>
   </div>
 </template>
@@ -78,7 +78,9 @@ export default {
 
       state: store.state,
 
-      gameCreator: ''
+      gameCreator: '',
+
+      submited: false
     }
   },
   components: {
@@ -86,6 +88,7 @@ export default {
   mounted: function() {
     this.createCameraElement(this.$refs.camera1);
     this.getGameCreatorName(this.state.gameData.idCreator);
+    this.submited = false;
   },
   methods: {
     getGameCreatorName(idCreator) {
@@ -106,6 +109,7 @@ export default {
     },
     submitGuessing() {
       store.commit('submitGuessing', this.guessing);
+      this.submited = true;
     },
     async createCameraElement(refRecieved) {
       this.isLoading = true;

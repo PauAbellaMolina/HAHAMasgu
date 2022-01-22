@@ -74,10 +74,12 @@ export default {
     return {
       userName: '',
       state: store.state,
+      winnerPicked: false,
     }
   },
   created: function() {
     this.getGameCreatorName(this.guess.idUser)
+    this.winnerPicked = false;
   },
   methods: {
     getGameCreatorName(idCreator) {
@@ -101,7 +103,10 @@ export default {
       }
     },
     pickWinner(idWinner) {
-      store.commit("pickWinner", idWinner)
+      if(!this.winnerPicked) {
+        store.commit("pickWinner", idWinner)
+        this.winnerPicked = true;
+      }
     }
   }
 }

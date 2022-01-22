@@ -20,7 +20,7 @@
         <span>Short hint:</span>
         <textarea v-model="game.txtHint" type="text" placeholder="" />
     </div>
-    <button class="submitBtn" @click="submitNewGame()" :disabled="game.txtGuessing===null || game.txtGuessing==='' || game.txtHint===null || game.txtHint==='' || game.txtEmoji1===null || txtEmoji1==='' || game.txtEmoji2===null || game.txtEmoji2==='' || game.txtEmoji3===null || game.txtEmoji3==='' || game.txtEmoji4===null || game.txtEmoji4===''">
+    <button class="submitBtn" @click="submitNewGame()" :disabled="submited || game.txtGuessing===null || game.txtGuessing==='' || game.txtHint===null || game.txtHint==='' || game.txtEmoji1===null || txtEmoji1==='' || game.txtEmoji2===null || game.txtEmoji2==='' || game.txtEmoji3===null || game.txtEmoji3==='' || game.txtEmoji4===null || game.txtEmoji4===''">
         CREATE
     </button>
   </div>
@@ -41,16 +41,19 @@ export default {
             txtEmoji3:'',
             txtEmoji4:'',
         },
+
+        submited: false
     }
   },
   components: {
   },
   mounted: function() {
-
+    this.submited = false;
   },
   methods: {
     submitNewGame() {
       store.commit('submitNewGame', this.game);
+      this.submited = true;
     },
   }
 }
